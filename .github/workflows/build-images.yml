@@ -1,0 +1,90 @@
+# Build and push API / worker / dashboard images to GHCR.
+#
+# Tag bump into Helm (required for Argo CD on CIRRUS):
+#   1. This workflow publishes tags such as:
+#        - semver from git tag v1.2.3 → 1.2.3
+#        - branch main → main
+#        - commit → sha-<shortsha>
+#   2. Edit helm/aether-agents/values.yaml and set:
+#        api.image.tag / worker.image.tag / dashboard.image.tag
+#      to the published tag (prefer semver for production).
+#   3. Also set api/worker/dashboard.image.repository to
+#        ghcr.io/<github.repository_owner>/aether-agents-<svc>
+#      (replace PLACEHOLDER after the first successful push).
+#   4. Commit the values change on branch main so CIRRUS Argo CD syncs.
+#
+# Harbor (optional later): retag/push to hub.k8s.ucar.edu/<project>/... and
+# update the same repository fields; keep the tag string identical.
+
+name: build-images
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            file: docker/Dockerfile.api
+            image: aether-agents-api
+          - name: worker
+            file: docker/Dockerfile.worker
+            image: aether-agents-worker
+          - name: dashboard
+            file: docker/Dockerfile.dashboard
+            image: aether-agents-dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.file }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Remind Helm tag bump
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "::notice::Published ${{ matrix.image }}. Update helm/aether-agents/values.yaml image.tag (and repository if still PLACEHOLDER), then commit to main for Argo CD."

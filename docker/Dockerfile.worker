@@ -1,0 +1,27 @@
+# AetherAgents worker: scheduled ingest + agent pipeline
+# Build: docker build -f docker/Dockerfile.worker -t aether-agents-worker:local .
+# CIRRUS/Harbor: tag as hub.k8s.ucar.edu/<project>/aether-agents-worker:<tag>
+
+FROM python:3.12-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONPATH=/app/src:/app
+
+WORKDIR /app
+
+RUN groupadd --gid 10001 aether \
+    && useradd --uid 10001 --gid aether --shell /usr/sbin/nologin --create-home aether
+
+COPY pyproject.toml README.md LICENSE ./
+COPY src ./src
+COPY apps/worker ./apps/worker
+
+RUN pip install --no-cache-dir -e . \
+    && chown -R aether:aether /app
+
+USER aether
+
+CMD ["python", "-m", "apps.worker.main"]

@@ -1,0 +1,183 @@
+# CIRRUS values patterned on NCAR/cirrus-examples (web-app-helm, postgres-helm, external-secret-helm)
+# Target FQDN: aether-agents.k8s.ucar.edu
+#
+# Image registry notes
+# --------------------
+# Early onboarding: GHCR (public pull works without Harbor).
+#   ghcr.io/<github-org-or-user>/aether-agents-{api,worker,dashboard}:<tag>
+#
+# After a Harbor project exists, swap repository fields to:
+#   hub.k8s.ucar.edu/<project>/aether-agents-api
+#   hub.k8s.ucar.edu/<project>/aether-agents-worker
+#   hub.k8s.ucar.edu/<project>/aether-agents-dashboard
+# Keep the same tag; Argo CD syncs on the next Git push that updates these values.
+#
+# Tag bump workflow
+# -----------------
+# 1. Push/tag triggers .github/workflows/build-images.yml → images on GHCR.
+# 2. Set api.image.tag / worker.image.tag / dashboard.image.tag below to the
+#    published tag (semver from git tag v*, or sha-<shortsha> from main).
+# 3. Commit the values change on branch main so Argo CD deploys the new images.
+
+nameOverride: ""
+fullnameOverride: "aether-agents"
+
+# Public hostname (must end in .k8s.ucar.edu)
+fqdn: aether-agents.k8s.ucar.edu
+
+# Optional pull secrets (needed only for private GHCR/Harbor repos)
+imagePullSecrets: []
+
+api:
+  enabled: true
+  replicaCount: 2
+  image:
+    # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-api
+    repository: ghcr.io/PLACEHOLDER/aether-agents-api
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  # Extra plain env (non-secret). Secrets come from externalSecrets when enabled.
+  env: []
+
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-worker
+    repository: ghcr.io/PLACEHOLDER/aether-agents-worker
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  env: []
+
+dashboard:
+  enabled: true
+  replicaCount: 2
+  image:
+    # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-dashboard
+    repository: ghcr.io/PLACEHOLDER/aether-agents-dashboard
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+# Non-secret runtime config mounted as a ConfigMap
+config:
+  logLevel: INFO
+  region: delhi-nct
+  workerIntervalSeconds: "900"
+  # fixture | live | off: science chain after each ingest tick
+  workerPipelineMode: fixture
+  # Set after postgres.enabled=true (CloudNativePG RW service hostname)
+  # Until then API/worker can still run fixture pipeline without DB.
+  databaseUrl: "sqlite:////tmp/aether_agents.db"
+  # Example in-cluster URL once CNPG is up:
+  # databaseUrl: "postgresql+psycopg://aether_agents_user@aether-agents-pg-rw:5432/aether_agents"
+
+ingress:
+  enabled: true
+  # CIRRUS: traefik-external (public) or traefik-internal (UCAR/VPN)
+  # Patterned on cirrus-examples web-app-helm visibility → traefik-{{visibility}}
+  visibility: external
+  className: traefik-external
+  annotations:
+    cert-manager.io/cluster-issuer: incommon
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  tls:
+    enabled: true
+    secretName: incommon-cert-aether-agents
+  hosts:
+    - host: aether-agents.k8s.ucar.edu
+      paths:
+        - path: /
+          pathType: Prefix
+          service: dashboard
+        - path: /api
+          pathType: Prefix
+          service: api
+
+# CloudNativePG, patterned on NCAR/cirrus-examples helm/postgres-helm
+# Leave enabled: false until OpenBao DB credentials and SecretStore exist.
+# See docs/openbao-secrets.md and https://github.com/NCAR/cirrus-examples/tree/main/helm/postgres-helm
+postgres:
+  enabled: false
+  # Subchart / sibling-chart note: CIRRUS often deploys postgres-helm as its own
+  # Argo application. This umbrella chart can emit the same resources when enabled,
+  # or you can deploy postgres separately and only set config.databaseUrl here.
+  name: aether-agents-pg
+  group: aether-agents
+  instances: 2
+  size: 10Gi
+  # Internal LB DNS (postgres-helm pattern): <name>.k8s.ucar.edu
+  loadBalancerDns: true
+  superUser:
+    enabled: false
+    usernameKey: username
+    passwordKey: password
+    secretPath: aether-agents/postgres/superuser
+  app:
+    name: aether_agents
+    owner: aether_agents_user
+    usernameKey: username
+    passwordKey: password
+    secretPath: aether-agents/postgres/appuser
+
+# External Secrets / OpenBao: keys never stored in Git
+# Patterned on NCAR/cirrus-examples helm/external-secret-helm
+# Prerequisites: SecretStore "user-ro" in the namespace (ask cirrus-admin@ucar.edu)
+externalSecrets:
+  enabled: false
+  refreshInterval: 1h
+  secretStore:
+    name: user-ro
+    kind: SecretStore
+  # OpenBao path holding application API keys (KV properties listed below)
+  secretPath: aether-agents/app
+  # Target Kubernetes Secret name created by ExternalSecret
+  targetSecretName: aether-agents-app-secrets
+  # Keys pulled from OpenBao and injected as env vars on api + worker
+  keys:
+    - secretKey: DATA_GOV_IN_API_KEY
+      property: DATA_GOV_IN_API_KEY
+      envVar: DATA_GOV_IN_API_KEY
+    - secretKey: OPENAQ_API_KEY
+      property: OPENAQ_API_KEY
+      envVar: OPENAQ_API_KEY
+    - secretKey: FIRMS_MAP_KEY
+      property: FIRMS_MAP_KEY
+      envVar: FIRMS_MAP_KEY
+    # Optional: enable when Attribution/Critic/Advisory use an LLM
+    - secretKey: LLM_API_KEY
+      property: LLM_API_KEY
+      envVar: LLM_API_KEY
+      optional: true
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}

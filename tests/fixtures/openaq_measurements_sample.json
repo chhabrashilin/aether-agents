@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "page": 1,
+    "limit": 100,
+    "found": 4
+  },
+  "results": [
+    {
+      "value": 185.2,
+      "parameter": { "id": 2, "name": "pm25", "units": "µg/m³" },
+      "period": {
+        "datetimeFrom": { "utc": "2024-11-15T09:00:00Z", "local": "2024-11-15T14:30:00+05:30" },
+        "datetimeTo": { "utc": "2024-11-15T10:00:00Z", "local": "2024-11-15T15:30:00+05:30" }
+      },
+      "location": { "id": 1001, "name": "Anand Vihar" }
+    },
+    {
+      "value": 192.0,
+      "parameter": { "id": 2, "name": "pm25", "units": "µg/m³" },
+      "period": {
+        "datetimeFrom": { "utc": "2024-11-15T10:00:00Z", "local": "2024-11-15T15:30:00+05:30" },
+        "datetimeTo": { "utc": "2024-11-15T11:00:00Z", "local": "2024-11-15T16:30:00+05:30" }
+      },
+      "location": { "id": 1001, "name": "Anand Vihar" }
+    },
+    {
+      "value": null,
+      "parameter": { "id": 2, "name": "pm25", "units": "µg/m³" },
+      "period": {
+        "datetimeFrom": { "utc": "2024-11-15T11:00:00Z", "local": "2024-11-15T16:30:00+05:30" },
+        "datetimeTo": { "utc": "2024-11-15T12:00:00Z", "local": "2024-11-15T17:30:00+05:30" }
+      },
+      "location": { "id": 1001, "name": "Anand Vihar" }
+    },
+    {
+      "value": 210.5,
+      "parameter": { "id": 1, "name": "pm10", "units": "µg/m³" },
+      "period": {
+        "datetimeFrom": { "utc": "2024-11-15T10:00:00Z", "local": "2024-11-15T15:30:00+05:30" },
+        "datetimeTo": { "utc": "2024-11-15T11:00:00Z", "local": "2024-11-15T16:30:00+05:30" }
+      },
+      "location": { "id": 1001, "name": "Anand Vihar" }
+    }
+  ]
+}

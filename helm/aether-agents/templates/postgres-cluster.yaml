@@ -1,0 +1,32 @@
+{{- if .Values.postgres.enabled }}
+# Patterned on NCAR/cirrus-examples helm/postgres-helm
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.postgres.name }}
+  labels:
+    {{- include "aether-agents.labels" . | nindent 4 }}
+    app: {{ .Values.postgres.name }}
+    group: {{ .Values.postgres.group }}
+spec:
+  instances: {{ .Values.postgres.instances }}
+  storage:
+    size: {{ .Values.postgres.size }}
+  certificates:
+    serverTLSSecret: {{ .Values.postgres.name }}-server-cert
+    serverCASecret: {{ .Values.postgres.name }}-server-cert
+  postgresql:
+    pg_hba:
+      - "host all all 0.0.0.0/0 md5"
+  {{- if .Values.postgres.superUser.enabled }}
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: "{{ .Values.postgres.name }}-superuser"
+  {{- end }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.postgres.app.name }}
+      owner: {{ .Values.postgres.app.owner }}
+      secret:
+        name: "{{ .Values.postgres.name }}-app-user"
+{{- end }}

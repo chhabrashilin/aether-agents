@@ -1,0 +1,46 @@
+AetherAgents released as {{ include "aether-agents.fullname" . }}.
+
+FQDN: https://{{ .Values.fqdn }}
+Ingress class: {{ .Values.ingress.className }}
+
+URL map (CIRRUS Traefik):
+  - Dashboard UI:  https://{{ .Values.fqdn }}/
+  - API (strip /api in gateway): https://{{ .Values.fqdn }}/api/health
+  - OpenAPI:       https://{{ .Values.fqdn }}/api/docs
+  - Offline pipeline smoke: https://{{ .Values.fqdn }}/api/v1/pipeline/run?mode=fixture
+  - Metrics:       https://{{ .Values.fqdn }}/api/metrics
+
+Workloads:
+{{- if .Values.api.enabled }}
+  - API: {{ include "aether-agents.fullname" . }}-api
+    probes: GET /health (liveness + readiness)
+    resources: {{ .Values.api.resources.requests.cpu }}/{{ .Values.api.resources.requests.memory }} req
+{{- end }}
+{{- if .Values.worker.enabled }}
+  - Worker: {{ include "aether-agents.fullname" . }}-worker
+    pipeline mode: set AETHER_WORKER_PIPELINE=fixture|live|off via config/env
+{{- end }}
+{{- if .Values.dashboard.enabled }}
+  - Dashboard: {{ include "aether-agents.fullname" . }}-dashboard
+{{- end }}
+{{- if .Values.postgres.enabled }}
+  - Postgres (CNPG): {{ .Values.postgres.name }}
+  - Set config.databaseUrl to the CNPG RW service before expecting persistence
+{{- else }}
+  - Postgres: DISABLED (set postgres.enabled=true after OpenBao DB credentials exist)
+  - First deploy can still serve fixture pipeline without Postgres
+{{- end }}
+{{- if .Values.externalSecrets.enabled }}
+  - App secrets: ExternalSecret → {{ .Values.externalSecrets.targetSecretName }}
+{{- else }}
+  - App secrets: DISABLED (live CPCB/OpenAQ/FIRMS will not fetch until enabled)
+{{- end }}
+
+First-deploy checklist:
+  1. Replace ghcr.io/PLACEHOLDER/* image repositories with your GHCR or Harbor project.
+  2. Bump api/worker/dashboard image.tag after CI publishes.
+  3. Enable externalSecrets + postgres only after SecretStore/OpenBao paths exist.
+  4. Confirm /api/health and /api/v1/pipeline/run?mode=fixture before enabling live mode.
+  5. Advisories are non-authoritative; GRAP fields are alignment bands only (caqm.nic.in).
+
+After CI publishes images, bump image.tag in values.yaml and push to main for Argo CD.

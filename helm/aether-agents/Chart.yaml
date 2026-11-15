@@ -1,0 +1,20 @@
+apiVersion: v2
+name: aether-agents
+description: Delhi–NCT winter smog episode intelligence on CIRRUS (API, worker, dashboard)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - air-quality
+  - delhi
+  - cirrus
+  - cloudnativepg
+home: https://github.com/PLACEHOLDER/aether-agents
+sources:
+  - https://github.com/PLACEHOLDER/aether-agents
+maintainers:
+  - name: AetherAgents researchers
+annotations:
+  # Patterned on NCAR/cirrus-examples; no subchart deps (CNPG/ESO are cluster operators)
+  cirrus.ucar.edu/ingress: traefik-external
+  cirrus.ucar.edu/fqdn: aether-agents.k8s.ucar.edu

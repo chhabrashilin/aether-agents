@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "name": "openaq-api",
+    "page": 1,
+    "limit": 100,
+    "found": 3
+  },
+  "results": [
+    {
+      "id": 1001,
+      "name": "Anand Vihar",
+      "locality": "East Delhi",
+      "city": "Delhi",
+      "country": { "code": "IN", "name": "India" },
+      "coordinates": { "latitude": 28.6468, "longitude": 77.3160 }
+    },
+    {
+      "id": 1002,
+      "name": "ITO",
+      "locality": "Central Delhi",
+      "city": "Delhi",
+      "country": { "code": "IN", "name": "India" },
+      "coordinates": { "latitude": 28.6280, "longitude": 77.2410 }
+    },
+    {
+      "id": 1003,
+      "name": "Sector 62",
+      "locality": "Noida",
+      "city": "Noida",
+      "country": { "code": "IN", "name": "India" },
+      "coordinates": { "latitude": 28.6270, "longitude": 77.3649 }
+    }
+  ]
+}

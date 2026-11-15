@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "AetherAgents: Delhi–NCT winter smog episode intelligence"
+type: software
+version: 0.1.0
+date-released: "2026-11-15"
+license: MIT
+abstract: >-
+  Always-on multi-agent air-quality intelligence service for Delhi–NCT that
+  detects acute winter smog episodes, attributes source-class hypotheses with
+  cited evidence, and produces GRAP alignment-band advisories with explicit
+  uncertainty. Designed for CIRRUS (NCAR) GitOps deployment.
+keywords:
+  - air quality
+  - Delhi
+  - NCT
+  - PM2.5
+  - AQI
+  - GRAP
+  - multi-agent systems
+  - CIRRUS
+authors:
+  - family-names: Researchers
+    given-names: AetherAgents
+    affiliation: Independent / collaborating institutions
+repository-code: "https://github.com/PLACEHOLDER/aether-agents"

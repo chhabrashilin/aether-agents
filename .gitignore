@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.env
+.env.local
+*.egg
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Node / dashboard
+node_modules/
+apps/dashboard/dist/
+apps/dashboard/.vite/
+*.log
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets and local data
+secrets/
+*.pem
+*.key
+data/raw/
+data/processed/
+*.sqlite3
+
+# Helm / local overrides
+helm/**/charts/
+helm/**/*.tgz
+values-local.yaml
+values-secrets.yaml

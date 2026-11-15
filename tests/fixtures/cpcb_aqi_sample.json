@@ -1,0 +1,73 @@
+{
+  "created": 1730000000,
+  "updated": 1730003600,
+  "count": 6,
+  "records": [
+    {
+      "station": "Anand Vihar - DPCC",
+      "city": "Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "pollutant_id": "PM2.5",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "280",
+      "pollutant_max": "340",
+      "pollutant_avg": "312"
+    },
+    {
+      "station": "Anand Vihar - DPCC",
+      "city": "Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "pollutant_id": "PM10",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "250",
+      "pollutant_max": "310",
+      "pollutant_avg": "287"
+    },
+    {
+      "station": "ITO - CPCB",
+      "city": "Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "pollutant_id": "PM2.5",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "200",
+      "pollutant_max": "260",
+      "pollutant_avg": "241"
+    },
+    {
+      "station": "Sector 62 Noida - UPPCB",
+      "city": "Noida",
+      "state": "Uttar Pradesh",
+      "country": "India",
+      "pollutant_id": "PM2.5",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "210",
+      "pollutant_max": "270",
+      "pollutant_avg": "255"
+    },
+    {
+      "station": "Some Station Outside",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "country": "India",
+      "pollutant_id": "PM2.5",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "50",
+      "pollutant_max": "80",
+      "pollutant_avg": "65"
+    },
+    {
+      "station": "Bad Value Station",
+      "city": "Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "pollutant_id": "PM2.5",
+      "last_update": "15-11-2024 10:00:00",
+      "pollutant_min": "NA",
+      "pollutant_max": "NA",
+      "pollutant_avg": "NA"
+    }
+  ]
+}

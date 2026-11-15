@@ -1,0 +1,21 @@
+{{- if and .Values.postgres.enabled .Values.postgres.loadBalancerDns }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.name }}-service
+  labels:
+    {{- include "aether-agents.labels" . | nindent 4 }}
+    cirrus/lb: internal
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "{{ .Values.postgres.name }}.k8s.ucar.edu"
+    external-dns.alpha.kubernetes.io/ttl: "300"
+spec:
+  type: LoadBalancer
+  selector:
+    cnpg.io/cluster: {{ .Values.postgres.name }}
+    cnpg.io/instanceRole: primary
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+{{- end }}

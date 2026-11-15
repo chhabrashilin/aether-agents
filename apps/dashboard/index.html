@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AetherAgents: Delhi–NCT winter smog</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <p class="brand">AetherAgents</p>
+        <h1>Delhi–NCT winter smog episode intelligence</h1>
+        <p class="lede">
+          Research view of episode timelines, evidence scorecards, uncertainty,
+          and GRAP <em>alignment-band</em> advisories. Not a legal or CAQM order;
+          see <a href="https://caqm.nic.in/" rel="noopener" target="_blank">caqm.nic.in</a>.
+        </p>
+      </header>
+
+      <section class="controls" aria-label="Data source">
+        <label for="api-base">API base</label>
+        <div class="row">
+          <input id="api-base" type="url" value="http://127.0.0.1:8000" />
+          <button type="button" id="load-pipeline">Run fixture pipeline</button>
+          <button type="button" id="load-demo" class="secondary">Load demo</button>
+        </div>
+        <p id="status" class="status" role="status">Idle.</p>
+        <p id="run-meta" class="meta-line" hidden></p>
+      </section>
+
+      <section class="panel" aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading">Episode timeline</h2>
+        <p id="episode-meta" class="meta-line">No episode loaded.</p>
+        <div class="timeline" id="timeline" hidden></div>
+        <svg
+          id="timeline-chart"
+          class="chart"
+          viewBox="0 0 640 160"
+          role="img"
+          aria-label="AQI timeline chart"
+          hidden
+        ></svg>
+      </section>
+
+      <section class="panel" aria-labelledby="unc-heading">
+        <h2 id="unc-heading">Uncertainty &amp; critic</h2>
+        <div id="uncertainty-panel" class="unc-grid">
+          <p class="meta-line">Load a pipeline run to see critic findings.</p>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="score-heading">
+        <h2 id="score-heading">Evidence scorecard</h2>
+        <p class="meta-line">
+          Feature → weight → contribution (heuristic increments, not causal effects).
+        </p>
+        <div class="table-wrap">
+          <table id="scorecard" class="scorecard">
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Feature</th>
+                <th>Value</th>
+                <th>Weight</th>
+                <th>Δ score</th>
+                <th>Rule</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="attr-heading">
+        <h2 id="attr-heading">Source-class masses</h2>
+        <div id="posterior-bars" class="bars"></div>
+        <pre id="attribution-json" class="json-block">{}</pre>
+      </section>
+
+      <section class="panel" aria-labelledby="adv-heading">
+        <h2 id="adv-heading">Advisory (non-authoritative)</h2>
+        <p id="advisory-summary" class="summary"></p>
+        <p id="advisory-disclaimer" class="disclaimer"></p>
+        <pre id="advisory-json" class="json-block">{}</pre>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
