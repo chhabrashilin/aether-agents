@@ -9,9 +9,9 @@ keywords:
   - delhi
   - cirrus
   - cloudnativepg
-home: https://github.com/PLACEHOLDER/aether-agents
+home: https://github.com/chhabrashilin/aether-agents
 sources:
-  - https://github.com/PLACEHOLDER/aether-agents
+  - https://github.com/chhabrashilin/aether-agents
 maintainers:
   - name: AetherAgents researchers
 annotations:

@@ -33,7 +33,7 @@ api:
   replicaCount: 2
   image:
     # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-api
-    repository: ghcr.io/PLACEHOLDER/aether-agents-api
+    repository: ghcr.io/chhabrashilin/aether-agents-api
     tag: "0.1.0"
     pullPolicy: IfNotPresent
   service:
@@ -54,7 +54,7 @@ worker:
   replicaCount: 1
   image:
     # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-worker
-    repository: ghcr.io/PLACEHOLDER/aether-agents-worker
+    repository: ghcr.io/chhabrashilin/aether-agents-worker
     tag: "0.1.0"
     pullPolicy: IfNotPresent
   resources:
@@ -71,7 +71,7 @@ dashboard:
   replicaCount: 2
   image:
     # Harbor swap: hub.k8s.ucar.edu/<project>/aether-agents-dashboard
-    repository: ghcr.io/PLACEHOLDER/aether-agents-dashboard
+    repository: ghcr.io/chhabrashilin/aether-agents-dashboard
     tag: "0.1.0"
     pullPolicy: IfNotPresent
   service:

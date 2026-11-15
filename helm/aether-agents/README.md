@@ -39,5 +39,5 @@ as a sibling Argo application and only wire `config.databaseUrl` here.
 
 ## Harbor image swap
 
-Replace `ghcr.io/PLACEHOLDER/...` with `hub.k8s.ucar.edu/<project>/...` in `values.yaml`
+Replace `ghcr.io/chhabrashilin/...` with `hub.k8s.ucar.edu/<project>/...` in `values.yaml` if using Harbor
 once a Harbor project exists. Keep tags aligned with `.github/workflows/build-images.yml` output.
